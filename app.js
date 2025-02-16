@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { Worker } = require('bullmq');
-// const { actionQueue, activityQueue } = require('../bull');
 const uWs = require('uWebSockets.js');
 const path = require('path');
 require('dotenv').config();
@@ -16,6 +15,11 @@ mongoose.connect(uri, options).then(r => {
 }).catch(e => {
 	console.error('Failed to connect to MongoDB:', e);
 });
+
+mongoose.connection.on('connected', () => console.log('Mongoose connected to MongoDB'));
+mongoose.connection.on('error', (err) => console.error('Mongoose connection error:', err));
+mongoose.connection.on('disconnected', () => console.log('Mongoose disconnected from MongoDB'));
+mongoose.connection.on('reconnected', () => console.log('Mongoose reconnected to MongoDB'));
 
 const credentials = {
 	key_file_name: path.join(__dirname, './ssl', 'key.pem'),

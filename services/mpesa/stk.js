@@ -20,7 +20,6 @@ class StkService extends BaseService {
 			const validated = await callback(data);
 			return { data: validated, error: null };
 		} catch (e) {
-			console.error('Error validating data:', e);
 			return { data: null, error: e.message };
 		}
 	}
@@ -29,7 +28,7 @@ class StkService extends BaseService {
 	registerRoutes() {
 		const routes = [
 			{ method: 'post', url: `${this.api}/mpesa/push`, handler: this.push.bind(this), isProtected: false },
-			{ method: 'post', url: `${this.api}/mpesa/callback`, handler: this.callback.bind(this), isProtected: false }
+			{ method: 'post', url: `${this.api}/mpesa/callback/:id`, handler: this.callback.bind(this), isProtected: false }
 		];
 		
 		routes.forEach((route) => {
@@ -81,7 +80,6 @@ class StkService extends BaseService {
 			},
 			body: JSON.stringify(payload),
 		});
-		
 		if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 		return response.json();
 	};
@@ -96,12 +94,13 @@ class StkService extends BaseService {
 	};
 	
 	// A service endpoint to push a stk to the user device
-	push = async ({ req, res }) => {
+	push = async (req, res) => {
 		try {
-			const { data, error } = this.validate(req.body, mpesa.stk)
+			const { data, error } = await this.validate(req.body, mpesa.stk)
 			if (error) return this.jsonResponse(res, 400, { error: error, success: false });
 			const { phone, amount, id } = data;
-			const token = await this.#token();
+			const { token, error: tokenError } = await this.#token();
+			if (tokenError) return this.jsonResponse(res, 500, { error: tokenError, success: false });
 			const password = this.#password(shortCode, passKey, timestamp);
 			const payload = this.#payload(phone, amount, shortCode, password, timestamp, id);
 			const responseData = await this.#stk(stkPush, payload, token );
@@ -135,14 +134,12 @@ class StkService extends BaseService {
 	}
 	
 	// A service endpoint to receive the callback from safaricom API.
-	callback = async ({ req, res }) => {
+	callback = async (req, res) => {
 		try {
 			const { id } = req.params;
 			if(!req.body || !req.body["Body"]) return this.jsonResponse(res, 400, { success: false, error: "Invalid request" })
 			const { Body } = req.body;
-			
 			const { stkCallback: { CallbackMetadata, ResultCode, ResultDesc } } = Body;
-			
 			// if the request isn't successful, then the transaction failed
 			const { success, desc } = this.#mapCode(ResultCode);
 			if (!success) return this.jsonResponse(res, 400, { success: false, error: desc });
@@ -157,6 +154,7 @@ class StkService extends BaseService {
 			console.log(data);
 			return this.jsonResponse(res, 200, { success: true, message: "Payment received" });
 		} catch (e) {
+			console.error('Error processing callback:', e);
 			return this.jsonResponse(res, 500, {error: 'An error occurred', success: false})
 		}
 	}

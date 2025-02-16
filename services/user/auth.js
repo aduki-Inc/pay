@@ -48,7 +48,7 @@ class AuthService extends BaseService {
 	}
 	
 	// description A service endpoint to create a new user
-	create = async ({ req, res }) => {
+	create = async (req, res) => {
 		const { data, error } = await this.validate(req.body, user.register);
 		// If there is an error, return a bad request error
 		if (error) {
@@ -71,7 +71,7 @@ class AuthService extends BaseService {
 	}
 	
 	// A service endpoint to log in a user
-	login = async ({ req, res }) => {
+	login = async (req, res) => {
 		// validate the data
 		const { data, error } = await this.validate(req.body, user.login);
 		
@@ -89,7 +89,7 @@ class AuthService extends BaseService {
 		}
 	}
 	
-	get = async ({ req, res }) => {
+	get = async (req, res) => {
 		const { hash } = req.params;
 		try {
 			const user = await User.findOne({ hex: hash }).exec();
@@ -108,7 +108,7 @@ class AuthService extends BaseService {
 	}
 
 	// Recover a user's password
-	recover = async ({ req, res }) => {
+	recover = async (req, res) => {
 		const { data, error } = await this.validate(req.body, user.recover);
 		if (error) return this.jsonResponse(res, 400, { error, success: false });
 		try {
@@ -125,7 +125,7 @@ class AuthService extends BaseService {
 	}
 	
 	// Verify a code
-	verify = async ({ req, res }) => {
+	verify = async (req, res) => {
 		const { data, error } = await this.validate(req.body, user.verify);
 		if (error) return this.jsonResponse(res, 400, { error, success: false });
 		try {
@@ -141,7 +141,7 @@ class AuthService extends BaseService {
 	}
 	
 	// change a user's password
-	changePassword = async ({ req, res }) => {
+	changePassword = async (req, res) => {
 		const { data, error } = await this.validate(req.body, user.password);
 		if (error) return this.jsonResponse(res, 400, { error, success: false });
 		try {

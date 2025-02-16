@@ -29,7 +29,7 @@ class EditService extends BaseService {
 			{ method: 'patch', url: `${this.api}/user/edit/about`, handler: this.about.bind(this), isProtected: true },
 			{ method: 'patch', url: `${this.api}/user/edit/country`, handler: this.country.bind(this), isProtected: true },
 			{ method: 'patch', url: `${this.api}/user/edit/avatar`, handler: this.avatar.bind(this), isProtected: true },
-			{ method: 'delete', url: `${this.api}/user/edit/remove`, handler: this.remove.bind(this), isProtected: true }
+			{ method: 'del', url: `${this.api}/user/edit/remove`, handler: this.remove.bind(this), isProtected: true }
 		];
 		
 		routes.forEach((route) => {
@@ -38,7 +38,7 @@ class EditService extends BaseService {
 	}
 	
 	// A service endpoint to update the email of a user
-	email = async ({ req, res }) => {
+	email = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: email
 		const { data, error } = await this.validate(req.body, user.email);
@@ -57,7 +57,7 @@ class EditService extends BaseService {
 	}
 	
 	// A service endpoint to update the phone number
-	phone = async ({ req, res }) => {
+	phone = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: phone
 		const { data, error } = await this.validate(req.body, user.phone);
@@ -76,7 +76,7 @@ class EditService extends BaseService {
 	}
 	
 	// A service endpoint to update the password
-	password = async ({ req, res }) => {
+	password = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: password
 		const { data, error } = await this.validate(req.body, user.password);
@@ -95,7 +95,7 @@ class EditService extends BaseService {
 	}
 	
 	// A service endpoint to update the name
-	name = async ({ req, res }) => {
+	name = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: name
 		const { data, error } = await this.validate(req.body, user.name);
@@ -114,7 +114,7 @@ class EditService extends BaseService {
 	}
 	
 	//  A service endpoint to update about
-	about = async ({ req, res }) => {
+	about = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: about
 		const { data, error } = await this.validate(req.body, user.about);
@@ -133,7 +133,7 @@ class EditService extends BaseService {
 	}
 	
 	// A service endpoint to update the country
-	country = async ({ req, res }) => {
+	country = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: country
 		const { data, error } = await this.validate(req.body, user.country);
@@ -152,7 +152,7 @@ class EditService extends BaseService {
 	}
 	
 	// A service endpoint to update the avatar
-	avatar = async ({ req, res }) => {
+	avatar = async (req, res) => {
 		const { user: { hex }} = req;
 		// validate the data: avatar
 		const { data, error } = await this.validate(req.body, user.avatar);
@@ -170,7 +170,7 @@ class EditService extends BaseService {
 		}
 	}
 	
-	remove = async ({ req, res }) => {
+	remove = async (req, res) => {
 		const {user: {hex}} = req;
 		try {
 			const user = await User.findOne({ hex }).exec();

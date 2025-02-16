@@ -4,10 +4,9 @@ const validateEmail = email => {
 	return re.test(email);
 }
 
-// validate phone number using regex of all countries
+// validate phone number: at least 10 digits
 const validatePhone = phone => {
-	const re = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-	return re.test(phone);
+	return phone.length >= 10;
 }
 
 // validate name

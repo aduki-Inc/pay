@@ -12,9 +12,27 @@ class BaseService {
 	
 	// Registers a single route and applies the middleware before the handler
 	registerRoute(method, url, handler, isProtected = false) {
-		this.app[method](url, (req, res) => {
+		this.app[method](url, async (res, req) => {
 			let jsonString = '';
-			res.onData((chunk, isLast) => {
+			const abortHandler = () => {
+				res.aborted = true;
+			};
+			
+			req.params = {}
+			
+			// if any params loop through and add to req.params
+			if (url.includes(':')) {
+				const urlParts = url.split('/');
+				const reqParts = req.getUrl().split('/');
+				urlParts.forEach((part, index) => {
+					if (part.startsWith(':')) {
+						req.params[part.slice(1)] = reqParts[index];
+					}
+				});
+			}
+			
+			res.onAborted(abortHandler)
+			res.onData(async (chunk, isLast) => {
 				jsonString += Buffer.from(chunk).toString();
 				if (isLast) {
 					try {
@@ -26,7 +44,7 @@ class BaseService {
 						};
 						
 						// if protected, apply the middleware else call the handler directly
-						isProtected ? this.middleware(enhancedReq, res, () => handler(enhancedReq, res)) : handler(enhancedReq, res);
+						isProtected ? await this.middleware(req = enhancedReq, res, () => handler(req = enhancedReq, res)) : handler(req = enhancedReq, res);
 					} catch (err) {
 						console.error('Error parsing JSON or handling middleware:', err);
 						this.jsonResponse(res, 400, { error: 'Invalid request', success: false });
@@ -74,6 +92,7 @@ class BaseService {
 	// Sends a JSON response with the specified status code
 	jsonResponse(res, status, data) {
 		res.cork(() => {
+			// use application/json content type
 			res.writeStatus(`${status} ${this.getStatusText(status)}`)
 				.writeHeader('Content-Type', 'application/json')
 				.end(JSON.stringify(data));
