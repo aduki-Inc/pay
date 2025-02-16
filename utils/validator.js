@@ -9,16 +9,6 @@ const validatePhone = phone => {
 	return phone.length >= 10;
 }
 
-// validate name
-const validateName = name => {
-	// name should min of 2 names and max of 3 names
-	const names = name.trim().split(' ');
-	
-	if (names.length < 2 || names.length > 3) {
-		return false;
-	}
-}
-
 // validate password
 const validatePassword = password => {
 	// 1. password should be at least 6 characters long

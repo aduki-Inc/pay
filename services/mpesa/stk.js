@@ -85,7 +85,7 @@ class StkService extends BaseService {
 	};
 	
 	#response = response => {
-		const success = response?.ResponseCode === "0";
+		const success = response["ResponseCode"] === "0";
 		return {
 			success,
 			data: response,
