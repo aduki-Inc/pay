@@ -1,11 +1,8 @@
-const ConversationService = require('./conversation');
-const MessageService = require('./message');
-const UserService = require('./user');
+const user = require('./user');
+const mpesa = require('./mpesa');
 
 // export all services
 module.exports = (app, api) => {
-	// Conversation service
-	new ConversationService(app, api);
-	new MessageService(app, api);
-	new UserService(app, api);
+	mpesa(app, api);
+	user(app, api);
 }

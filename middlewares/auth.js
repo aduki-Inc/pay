@@ -1,5 +1,5 @@
 // encryption: validate and return decoded token details
-const { tokenUtils: { validateToken } } = require('../utils');
+const { token: { verify } } = require('../utils');
 const { User, Conversation } = require('../models');
 
 // Validate and return decoded token details
@@ -17,7 +17,7 @@ const authorize = async cookies => {
 	const {
 		user,
 		error
-	} = await validateToken(token);
+	} = await verify(token);
 	
 	// console.log('User', user)
 	

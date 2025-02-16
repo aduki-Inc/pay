@@ -106,6 +106,20 @@ const validate = (values, schema) => {
 			}
 		}
 		
+		// if the value is a number and has min and max values
+		if (rule.type === 'number' && typeof values[key] !== 'number') {
+			throw new Error(`${key} should be a number`);
+		}
+		
+		// validate rule: min and max values for number
+		if (rule.min && values[key] < rule.min) {
+			throw new Error(`${key} should not be less than ${rule.min}`);
+		}
+		
+		if (rule.max && values[key] > rule.max) {
+			throw new Error(`${key} should not be more than ${rule.max}`);
+		}
+		
 		// validate rule: password
 		if (rule.type === 'password') {
 			if (!validatePassword(values[key])) {

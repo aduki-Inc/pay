@@ -1,10 +1,9 @@
 const BaseService = require('../base');
 const { User } = require('../../models');
 const { user} = require('../../validators');
-const bycrypt = require('bcryptjs');
 
 // service handles all auth-related operations
-class AuthService extends BaseService {
+class EditService extends BaseService {
 	constructor(app, api) {
 		super(app, api);
 		this.registerRoutes();
@@ -20,85 +19,29 @@ class AuthService extends BaseService {
 		}
 	}
 	
-	// validate the password
-	validatePassword = async (password, hash) => {
-		try {
-			return await bycrypt.compare(password, hash);
-		} catch (e) {
-			console.error('Error validating password:', e);
-			return false;
-		}
-	}
-	
 	// all routes for the service dynamically
 	registerRoutes() {
 		const routes = [
-			{ method: 'put', url: `${this.api}/user/add`, handler: this.create.bind(this) },
-			{ method: 'get', url: `${this.api}/user/retrieve`, handler: this.retrieve.bind(this) },
-			{ method: 'patch', url: `${this.api}/user/edit/keys`, handler: this.updateKeys.bind(this) },
-			{ method: 'patch', url: `${this.api}/user/edit/status`, handler: this.updateStatus.bind(this) },
-			{ method: 'patch', url: `${this.api}/user/edit/avatar`, handler: this.updateAvatar.bind(this) },
-			{ method: 'patch', url: `${this.api}/user/edit/verification`, handler: this.updateVerification.bind(this) },
-			{ method: 'patch', url: `${this.api}/user/edit/name`, handler: this.updateName.bind(this) },
-			{ method: 'del', url: `${this.api}/user/remove`, handler: this.delete.bind(this) }
+			{ method: 'patch', url: `${this.api}/user/edit/email`, handler: this.email.bind(this), isProtected: true },
+			{ method: 'patch', url: `${this.api}/user/edit/phone`, handler: this.phone.bind(this), isProtected: true },
+			{ method: 'patch', url: `${this.api}/user/edit/password`, handler: this.password.bind(this), isProtected: true },
+			{ method: 'patch', url: `${this.api}/user/edit/name`, handler: this.name.bind(this), isProtected: true },
+			{ method: 'patch', url: `${this.api}/user/edit/about`, handler: this.about.bind(this), isProtected: true },
+			{ method: 'patch', url: `${this.api}/user/edit/country`, handler: this.country.bind(this), isProtected: true },
+			{ method: 'patch', url: `${this.api}/user/edit/avatar`, handler: this.avatar.bind(this), isProtected: true },
+			{ method: 'delete', url: `${this.api}/user/edit/remove`, handler: this.remove.bind(this), isProtected: true }
 		];
 		
 		routes.forEach((route) => {
-			this.registerRoute(route.method, route.url, route.handler);
+			this.registerRoute(route.method, route.url, route.handler, route.isProtected );
 		});
 	}
 	
-	// description A service endpoint to create a new user
-	create = async ({ req, res }) => {
-		// validate the data
-		const { data, error } = await this.validate(req.body, user.register);
-		
-		// If there is an error, return a bad request error
-		if (error) {
-			return this.jsonResponse(res, 400, { error, success: false });
-		}
-		
-		try {
-			// check if the user already exists using its
-			const existingUser = await User.findOne({ hex: data.hex }).exec();
-			// if the user already exists, return a conflict error
-			if(existingUser) return this.jsonResponse(res, 409, { error: 'User already exists', success: false });
-			const user = new User(data);
-			// save the user
-			await user.save();
-			this.jsonResponse(res, 201, { user, success: true });
-		} catch (error) {
-			console.error('Error fetching messages:', error);
-			this.jsonResponse(res, 500, { error: 'Internal Server Error', success: false });
-		}
-	}
-	
-	// A service endpoint to log in a user
-	login = async ({ req, res }) => {
-		// validate the data
-		const { data, error } = await this.validate(req.body, user.login);
-		
-		if (error) return this.jsonResponse(res, 400, { error, success: false });
-		
-		try {
-			const user = await User.findOne({ hex: data.hex }).exec();
-			if (!user) return this.jsonResponse(res, 404, { error: 'User not found', success: false });
-			const validPassword = await this.validatePassword(data.password, user.password);
-			if (!validPassword) return this.jsonResponse(res, 401, { error: 'Invalid password', success: false });
-			return this.jsonResponse(res, 200, { user, success: true });
-		} catch (error) {
-			console.error('Error fetching messages:', error);
-			this.jsonResponse(res, 500, { error: 'Internal Server Error', success: false });
-		}
-	}
-	
 	// A service endpoint to update the email of a user
-	updateEmail = async ({ req, res }) => {
+	email = async ({ req, res }) => {
 		const { user: { hex }} = req;
-		
 		// validate the data: email
 		const { data, error } = await this.validate(req.body, user.email);
-		
 		if (error) return this.jsonResponse(res, 400, { error, success: false });
 		
 		try {
@@ -112,6 +55,134 @@ class AuthService extends BaseService {
 			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
 		}
 	}
+	
+	// A service endpoint to update the phone number
+	phone = async ({ req, res }) => {
+		const { user: { hex }} = req;
+		// validate the data: phone
+		const { data, error } = await this.validate(req.body, user.phone);
+		if (error) return this.jsonResponse(res, 400, { error, success: false });
+		
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			user.phone = data.phone;
+			await user.save();
+			this.jsonResponse(res, 200, {user, success: true});
+		} catch (e) {
+			console.error('Error updating user status:', e);
+			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
+		}
+	}
+	
+	// A service endpoint to update the password
+	password = async ({ req, res }) => {
+		const { user: { hex }} = req;
+		// validate the data: password
+		const { data, error } = await this.validate(req.body, user.password);
+		if (error) return this.jsonResponse(res, 400, { error, success: false });
+		
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			user.password = data.password;
+			await user.save();
+			this.jsonResponse(res, 200, {user, success: true});
+		} catch (e) {
+			console.error('Error updating user status:', e);
+			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
+		}
+	}
+	
+	// A service endpoint to update the name
+	name = async ({ req, res }) => {
+		const { user: { hex }} = req;
+		// validate the data: name
+		const { data, error } = await this.validate(req.body, user.name);
+		if (error) return this.jsonResponse(res, 400, { error, success: false });
+		
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			user.name = data.name;
+			await user.save();
+			this.jsonResponse(res, 200, {user, success: true});
+		} catch (e) {
+			console.error('Error updating user status:', e);
+			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
+		}
+	}
+	
+	//  A service endpoint to update about
+	about = async ({ req, res }) => {
+		const { user: { hex }} = req;
+		// validate the data: about
+		const { data, error } = await this.validate(req.body, user.about);
+		if (error) return this.jsonResponse(res, 400, { error, success: false });
+		
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			user.about = data.about;
+			await user.save();
+			this.jsonResponse(res, 200, {user, success: true});
+		} catch (e) {
+			console.error('Error updating user status:', e);
+			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
+		}
+	}
+	
+	// A service endpoint to update the country
+	country = async ({ req, res }) => {
+		const { user: { hex }} = req;
+		// validate the data: country
+		const { data, error } = await this.validate(req.body, user.country);
+		if (error) return this.jsonResponse(res, 400, { error, success: false });
+		
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			user.country = data.country;
+			await user.save();
+			this.jsonResponse(res, 200, {user, success: true});
+		} catch (e) {
+			console.error('Error updating user status:', e);
+			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
+		}
+	}
+	
+	// A service endpoint to update the avatar
+	avatar = async ({ req, res }) => {
+		const { user: { hex }} = req;
+		// validate the data: avatar
+		const { data, error } = await this.validate(req.body, user.avatar);
+		if (error) return this.jsonResponse(res, 400, { error, success: false });
+		
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			user.avatar = data.avatar;
+			await user.save();
+			this.jsonResponse(res, 200, {user, success: true});
+		} catch (e) {
+			console.error('Error updating user status:', e);
+			return this.jsonResponse(res, 500, {error: 'Error updating user status', success: false});
+		}
+	}
+	
+	remove = async ({ req, res }) => {
+		const {user: {hex}} = req;
+		try {
+			const user = await User.findOne({ hex }).exec();
+			if (!user) return this.jsonResponse(res, 404, {error: 'User not found', success: false});
+			
+			await user.remove();
+			this.jsonResponse(res, 200, {success: true});
+		} catch (e) {
+			console.error('Error removing user:', e);
+			return this.jsonResponse(res, 500, {error: 'Error removing user', success: false});
+		}
+	}
 }
 
-module.exports = UserService;
+module.exports = EditService;

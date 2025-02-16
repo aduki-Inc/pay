@@ -8,7 +8,6 @@ require('dotenv').config();
 const { mongo: { uri, options }, app: { host, port} } = require('./configs');
 const { authorize, checkConversation } = require("./middlewares").authMiddleware;
 const services = require('./services');
-const { MessageController } = require('./controllers');
 const { bull: { SocketWorker }} = require('./queues');
 
 // Connect to the MongoDB database
@@ -85,9 +84,9 @@ const app = uWs.SSLApp(credentials).ws('/events', {
 		activeConnections.delete(ws.user.hex);
 	},
 	
-	// error: (ws, error) => {
-	// 	console.error('A WebSocket error occurred:', error);
-	// 	}
+	error: (ws, error) => {
+		console.error('A WebSocket error occurred:', error);
+	}
 	})
 	
 	// Listen to the port
@@ -192,7 +191,7 @@ const app = uWs.SSLApp(credentials).ws('/events', {
 				message = JSON.parse(message);
 				
 				// process the message via MessageController
-				new MessageController(app, ws, message, isBinary);
+				console.log('Message received:', message);
 			} catch (error) {
 				console.error('Message handling error:', error);
 			}

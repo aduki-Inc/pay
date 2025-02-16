@@ -7,6 +7,10 @@ module.exports = async values => {
 			type: 'password',
 			required: true,
 		},
+		email: {
+			type: 'email',
+			required: true,
+		},
 	};
 	
 	return validate (values, schema);

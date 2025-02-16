@@ -25,5 +25,6 @@ module.exports = {
 		// alt value it to be 10 days in milliseconds
 		jwtExpiry: convertToNumber(process.env.JWT_EXPIRES_IN, 864000000),
 		refreshExpiry: process.env.JWT_REFRESH_EXPIRES_IN,
+		randomKey: process.env.RANDOM_KEY,
 	}
 }

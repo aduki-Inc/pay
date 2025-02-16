@@ -12,7 +12,7 @@ class BaseService {
 	
 	// Registers a single route and applies the middleware before the handler
 	registerRoute(method, url, handler, isProtected = false) {
-		this.app[method](url, (res, req) => {
+		this.app[method](url, (req, res) => {
 			let jsonString = '';
 			res.onData((chunk, isLast) => {
 				jsonString += Buffer.from(chunk).toString();
@@ -36,7 +36,7 @@ class BaseService {
 		});
 	}
 	
-	// Middleware to decode JWT and attach user to the request object
+	// Middleware to decode JWT and attach this.app[method](url, (res, req) => {this.app[method](url, (res, req) => {this.app[method](url, (res, req) => {the user to the request object
 	async middleware(req, res, next) {
 		const token = req.getHeader('cookie')
 			?.split('; ')

@@ -32,7 +32,9 @@ user.pre('save', function (next) {
 	this.updatedAt = Date.now();
 	
 	// Encrypt the password before saving
-	this.password = bycrypt.hashSync(this.password, 10);
+	if (this.isModified('password')) {
+		this.password = bycrypt.hashSync(this.password, 10);
+	}
 	
 	next();
 });
@@ -55,6 +57,13 @@ user.virtual('codes', {
 	ref: 'Code',
 	localField: 'hex',
 	foreignField: 'user'
+});
+
+// Virtual to get a code owner
+code.virtual('author', {
+	ref: 'User',
+	localField: 'user',
+	foreignField: 'hex'
 });
 
 // Mongoose Model
