@@ -1,9 +1,10 @@
 const token = require('./token');
-const { validate, sanitize} = require('./validator');
-const generateHash = require('./hash');
+const { validate, sanitize } = require('./validator');
+const { generate, generateLong } = require('./hash');
 const timestamp = require('./timestamp');
+const mpesa = require('./mpesa');
 module.exports = {
-	token, timestamp,
-	hash: { generate: generateHash },
+	token, timestamp, mpesa,
+	hash: { generate, generateLong },
 	validate, sanitize
 }

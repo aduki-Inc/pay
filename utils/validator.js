@@ -133,23 +133,30 @@ const validate = (values, schema) => {
 		}
 		
 		// check and validate email
-		if (keyStr === 'email') {
+		if (rule.type === 'email') {
 			if (!validateEmail(values[key])) {
 				throw new Error('Email is not valid');
 			}
 		}
 		
 		// check and validate dob
-		if (keyStr === 'dob') {
+		if (rule.type === 'dob') {
 			if (validateDob(values[key])) {
 				throw new Error('You must be 18 years and above');
 			}
 		}
 		
 		// check and validate phone number
-		if (keyStr === 'phone') {
+		if (rule.type === 'phone') {
 			if (!validatePhone(values[key])) {
 				throw new Error('Phone number is not valid');
+			}
+		}
+		
+		// check and validate mpesa phone number
+		if (rule.type === 'mpesaPhone') {
+			if (!validateMpesaPhone(values[key])) {
+				throw new Error('Invalid Mpesa phone number');
 			}
 		}
 		
