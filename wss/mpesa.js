@@ -4,7 +4,7 @@ const { mpesa } = require("../validators");
 
 // Create the websocket server for mpesa
 class MpesaWebSocket {
-	constructor(app, connections) {
+	constructor(app) {
 		this.app = app;
 		this.connections = new Map();
 		this.init(app);

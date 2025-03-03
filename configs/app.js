@@ -1,15 +1,9 @@
-convertToNumber = (value, alt) => {
+const convertToNumber = (value, alt) => {
 	try {
-		const num = parseInt(value);
-		if(isNaN(num)) {
-			return alt;
-		}
-		
-		return num;
-	} catch (error) {
-		return alt;
-	}
-}
+		const num = parseInt(value, 10);
+		return isNaN(num) ? alt : num;
+	} catch { return alt }
+};
 
 module.exports = {
 	app: {

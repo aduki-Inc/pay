@@ -1,3 +1,4 @@
 const MpesaWebSocket = require('./mpesa');
-
-module.exports = { MpesaWebSocket };
+module.exports = app => {
+	new MpesaWebSocket(app)
+}
