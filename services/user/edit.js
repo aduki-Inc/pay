@@ -6,7 +6,7 @@ const { user} = require('../../validators');
 class EditService extends BaseService {
 	constructor(app, api) {
 		super(app, api);
-		this.registerRoutes();
+		this.routes();
 	}
 	
 	validate = async (data, callback) => {
@@ -20,21 +20,15 @@ class EditService extends BaseService {
 	}
 	
 	// all routes for the service dynamically
-	registerRoutes() {
-		const routes = [
-			{ method: 'patch', url: `${this.api}/user/edit/email`, handler: this.email.bind(this), isProtected: true },
-			{ method: 'patch', url: `${this.api}/user/edit/phone`, handler: this.phone.bind(this), isProtected: true },
-			{ method: 'patch', url: `${this.api}/user/edit/password`, handler: this.password.bind(this), isProtected: true },
-			{ method: 'patch', url: `${this.api}/user/edit/name`, handler: this.name.bind(this), isProtected: true },
-			{ method: 'patch', url: `${this.api}/user/edit/about`, handler: this.about.bind(this), isProtected: true },
-			{ method: 'patch', url: `${this.api}/user/edit/country`, handler: this.country.bind(this), isProtected: true },
-			{ method: 'patch', url: `${this.api}/user/edit/avatar`, handler: this.avatar.bind(this), isProtected: true },
-			{ method: 'del', url: `${this.api}/user/edit/remove`, handler: this.remove.bind(this), isProtected: true }
-		];
-		
-		routes.forEach((route) => {
-			this.registerRoute(route.method, route.url, route.handler, route.isProtected );
-		});
+	routes() {
+		this.add('patch', `${this.api}/user/edit/email`, this.email.bind(this), true);
+		this.add('patch', `${this.api}/user/edit/phone`, this.phone.bind(this), true);
+		this.add('patch', `${this.api}/user/edit/password`, this.password.bind(this), true);
+		this.add('patch', `${this.api}/user/edit/name`, this.name.bind(this), true);
+		this.add('patch', `${this.api}/user/edit/about`, this.about.bind(this), true);
+		this.add('patch', `${this.api}/user/edit/country`, this.country.bind(this), true);
+		this.add('patch', `${this.api}/user/edit/avatar`, this.avatar.bind(this), true);
+		this.add('del', `${this.api}/user/edit/remove`, this.remove.bind(this), true);
 	}
 	
 	// A service endpoint to update the email of a user

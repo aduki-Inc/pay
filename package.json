@@ -1,6 +1,7 @@
 {
-  "name": "chat-server",
+  "name": "fund",
   "version": "0.1.0",
+  "type": "commonjs",
   "description": "A chat server application",
   "main": "index.js",
   "scripts": {

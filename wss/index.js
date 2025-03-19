@@ -1,3 +1,3 @@
-const MpesaWebSocket = require('./mpesa');
+const { MpesaWebSocket, MpesaB2CWebsocket } = require('./mpesa');
 
-module.exports = { MpesaWebSocket };
+module.exports = { MpesaWebSocket, MpesaB2CWebsocket };

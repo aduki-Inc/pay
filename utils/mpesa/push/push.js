@@ -1,6 +1,6 @@
-const { mpesa: { shortCode, passKey, stkPush }} = require('../../configs');
-const timestamp = require('../timestamp');
-const getToken = require('./token');
+const { mpesa: { shortCode, passKey, stkPush }} = require('../../../configs');
+const timestamp = require('../../timestamp');
+const getToken = require('../token');
 const getPassword = require('./password');
 const getPayload = require('./payload');
 const processResponse = require('./response');

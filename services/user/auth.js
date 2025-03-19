@@ -8,7 +8,7 @@ const bycrypt = require('bcryptjs');
 class AuthService extends BaseService {
 	constructor(app, api) {
 		super(app, api);
-		this.registerRoutes();
+		this.routes();
 	}
 	
 	validate = async (data, callback) => {
@@ -32,19 +32,13 @@ class AuthService extends BaseService {
 	}
 	
 	// all routes for the service dynamically
-	registerRoutes() {
-		const routes = [
-			{ method: 'put', url: `${this.api}/user/add`, handler: this.create.bind(this), isProtected: false },
-			{ method: 'get', url: `${this.api}/user/:hash`, handler: this.get.bind(this) , isProtected: false },
-			{ method: 'post', url: `${this.api}/user/login`, handler: this.login.bind(this), isProtected: false },
-			{ method: 'post', url: `${this.api}/user/recover`, handler: this.recover.bind(this), isProtected: false },
-			{ method: 'post', url: `${this.api}/user/verify`, handler: this.verify.bind(this), isProtected: false },
-			{ method: 'patch', url: `${this.api}/user/password`, handler: this.changePassword.bind(this) , isProtected: false }
-		];
-		
-		routes.forEach((route) => {
-			this.registerRoute(route.method, route.url, route.handler,  route.isProtected );
-		});
+	routes() {
+		this.add('put', `${this.api}/user/add`, this.create, false);
+		this.add('get', `${this.api}/user/:hash`, this.get, false);
+		this.add('post', `${this.api}/user/login`, this.login, false);
+		this.add('post', `${this.api}/user/recover`, this.recover, false);
+		this.add('post', `${this.api}/user/verify`, this.verify, false);
+		this.add('patch', `${this.api}/user/password`, this.changePassword, false);
 	}
 	
 	// description A service endpoint to create a new user

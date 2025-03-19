@@ -5,13 +5,8 @@ class BaseService {
 		this.api = api;
 	}
 	
-	// Should be implemented by child classes to register their specific routes
-	registerRoutes() {
-		throw new Error('registerRoutes must be implemented by child class');
-	}
-	
 	// Registers a single route and applies the middleware before the handler
-	registerRoute(method, url, handler, isProtected = false) {
+	add(method, url, handler, isProtected = false) {
 		this.app[method](url, async (res, req) => {
 			let jsonString = '';
 			const abortHandler = () => {

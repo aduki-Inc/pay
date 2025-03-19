@@ -1,4 +1,4 @@
-const { mpesa: { partyB, callbackUrl } } = require("../../configs");
+const { mpesa: { partyB, callbackUrl } } = require("../../../configs");
 module.exports = (data) => {
 	const { phone, amount, shortCode, password, timestamp, id, hash } = data;
 	return {

@@ -8,7 +8,7 @@ class StkService extends BaseService {
 	constructor(app, api) {
 		super(app, api);
 		this.websocket = new MpesaWebSocket(app);
-		this.registerRoutes();
+		this.routes();
 	}
 	
 	validate = async (data, callback) => {
@@ -21,17 +21,10 @@ class StkService extends BaseService {
 	}
 	
 	// all routes for the service dynamically
-	registerRoutes() {
-		const routes = [
-			{ method: 'post', url: `${this.api}/mpesa/push`, handler: this.push.bind(this), isProtected: false },
-			{ method: 'post', url: `${this.api}/mpesa/callback/:id/:hash`, handler: this.callback.bind(this), isProtected: false }
-		];
-		
-		routes.forEach((route) => {
-			this.registerRoute(route.method, route.url, route.handler, route.isProtected );
-		});
+	routes() {
+		this.add('post', `${this.api}/mpesa/push`, this.push.bind(this), false);
+		this.add('post', `${this.api}/mpesa/callback/:id/:hash`, this.callback.bind(this), false);
 	}
-	
 	
 	// A service endpoint to push a stk to the user device
 	push = async (req, res) => {

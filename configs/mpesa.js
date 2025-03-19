@@ -7,4 +7,10 @@ module.exports = {
 	stkPush: process.env.MPESA_STK_PUSH_URL,
 	credentialUrl: process.env.MPESA_CREDETIALS_URL,
 	callbackUrl: process.env.MPESA_CALLBACK_URL,
+	initiatorName: process.env.MPESA_INITIATOR_NAME,
+	initiatorPassword: process.env.MPESA_INITIATOR_PASSWORD,
+	b2cUrl: process.env.MPESA_B2C_URL,
+	b2cPartyA: process.env.MPESA_B2C_PARTYA,
+	b2cResultUrl: process.env.MPESA_B2C_RESULT_URL,
+	b2cQueueUrl: process.env.MPESA_B2C_QUEUE_URL,
 };
