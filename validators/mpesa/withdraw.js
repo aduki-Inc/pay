@@ -6,17 +6,17 @@ module.exports = async values => {
 		{
 			key: 'phone',
 			validate: v => phoneRegex.test(v),
-			error: { code: 130, error: 'Invalid phone number' }
+			error: { code: 120, error: 'Invalid phone number' }
 		},
 		{
 			key: 'amount',
 			validate: v => typeof v === 'number' && v >= 1 && v <= 150000,
-			error: { code: 131, error: 'Amount should be 1 or more and ≤ 150,000' }
+			error: { code: 121, error: 'Amount should be 1 or more and ≤ 150,000' }
 		},
 		{
-			key: 'remarks',
-			validate: v => typeof v === 'string',
-			error: { code: 132, error: 'Remarks must be a string' }
+			key: 'hash',
+			validate: v => typeof v === 'string' && v.length > 12,
+			error: { code: 122, error: 'Invalid tracking ID, must be 6 or more characters' }
 		}
 	];
 	

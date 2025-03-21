@@ -1,2 +1,2 @@
-const date = new Date();
-module.exports = `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}${String(date.getHours()).padStart(2, '0')}${String(date.getMinutes()).padStart(2, '0')}${String(date.getSeconds()).padStart(2, '0')}`;
+const timestamp = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+module.exports = timestamp;

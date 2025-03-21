@@ -7,8 +7,7 @@ module.exports = async (url, payload, token) => {
 		},
 		body: JSON.stringify(payload),
 	});
-	if (!response.ok) return { valid: false, data: { code: 109, error: 'Could not send the stk push request' } };
+	if (!response.ok) return { valid: false, data: { code: 106, error: 'Could not initiate the service request' }};
 	const data = await response.json();
-	
 	return { valid: true, data };
 };

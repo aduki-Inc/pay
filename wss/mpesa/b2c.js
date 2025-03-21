@@ -42,7 +42,7 @@ class MpesaB2CWebSocket {
 			message: async (ws, message, isBinary) => {
 				try {
 					const data = JSON.parse(Buffer.from(message).toString('utf-8'));
-					// If the message is a push request
+					// If the message is a stk request
 					if (data.kind === 'withdraw') {
 						await this.#withdraw(ws, data.payload);
 					}
@@ -62,13 +62,12 @@ class MpesaB2CWebSocket {
 		});
 	}
 	
-	validate = async (data, hash, callback) => {
+	validate = async (data, callback) => {
 		try {
 			const { valid, data: validated } = await callback(data);
-			validated.hash = hash;
 			return { valid, data: validated };
 		} catch (e) {
-			return { valid: false, data: { code: 106, error: 'Could not validate the payload data' }};
+			return { valid: false, data: { code: 123, error: 'Could not validate the payload data' }};
 		}
 	}
 	
@@ -78,9 +77,10 @@ class MpesaB2CWebSocket {
 		}
 	}
 	
-	// A service endpoint to push a stk to the user device
+	// A service endpoint to stk a stk to the user device
 	#withdraw = async (ws, payload) => {
-		const { valid, data } = await this.validate(payload, ws.hash, validateWithdraw);
+		payload.hash = ws.hash;
+		const { valid, data } = await this.validate(payload, validateWithdraw);
 		if (!valid) return ws.send(JSON.stringify({ kind: 'error', data: data }));
 		const { kind, data: pushData } = await withdraw(data);
 		ws.send(JSON.stringify({ kind, data: pushData }));

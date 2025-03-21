@@ -1,4 +1,4 @@
-const push = require('./push');
-const withdraw = require('./withdraw');
+const stk = require('./stk');
+const b2c = require('./b2c');
 
-module.exports = { push, withdraw };
+module.exports = { stk,b2c };
