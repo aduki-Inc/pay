@@ -7,7 +7,8 @@ module.exports = async (url, payload, token) => {
 		},
 		body: JSON.stringify(payload),
 	});
-	if (!response.ok) return { valid: false, data: { code: 106, error: 'Could not initiate the service request' }};
+	console.log("Response from M-Pesa STK Push:", await response.json());
+	if (!response.ok) return { valid: false, data: { code: 106, error: 'Could not initiate the service request' } };
 	const data = await response.json();
 	return { valid: true, data };
 };
